@@ -2,85 +2,75 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 项目概述
+## Project Overview
 
-这是一个基于 Ionic + Vue 3 + TypeScript + Vite 的工具箱应用（ToolBox）。
+ToolBox is a mobile utility app built with Ionic 8 + Vue 3 (Composition API) + TypeScript + Vite. It targets both web and Android (via Capacitor 8). App ID: `com.toolbox.app`.
 
-## 常用命令
+## Commands
 
-### 开发
 ```bash
-pnpm dev              # 启动开发服务器 (http://localhost:5173)
+pnpm dev                # Dev server at http://localhost:5173
+pnpm build              # Type-check (vue-tsc) then build
+pnpm lint               # ESLint
+pnpm test:unit          # Vitest (jsdom, globals enabled)
+pnpm test:e2e           # Cypress (requires dev server running)
+pnpm android:build      # Build web + sync to Capacitor Android
+pnpm android:open       # Open Android Studio
 ```
 
-### 构建
-```bash
-pnpm build            # 构建（包含 TypeScript 类型检查）
-```
+## Architecture
 
-### 测试
-```bash
-pnpm test:unit        # 运行单元测试 (Vitest)
-pnpm test:e2e         # 运行端到端测试 (Cypress)
-```
+### Navigation Pattern
 
-### 代码质量
-```bash
-pnpm lint             # 运行 ESLint
-```
+The app uses a **flat route + category homepage** model:
 
-### 预览
-```bash
-pnpm preview          # 预览生产构建
-```
+- `/` → `HomePage.vue` — Tool grid grouped by category (Daily Tools / Dev Tools)
+- `/tools/*` → Individual tool pages, each with `IonBackButton` back to `/`
 
-## 架构概述
+**Tool registry** (`src/data/tools.ts`) centralizes all tool metadata (id, name, description, icon, route, category). To add a new tool: add a registry entry, a route in `router/index.ts`, and a page component.
 
-### 技术栈
-- **框架**: Vue 3 (Composition API)
-- **UI 库**: Ionic Framework 8
-- **路由**: Vue Router 4 (集成 @ionic/vue-router)
-- **构建工具**: Vite 5
-- **语言**: TypeScript 5.9
-- **测试**: Vitest (单元测试) + Cypress (E2E 测试)
-- **代码规范**: ESLint
+**Tools:**
+- `/tools/calculator` → Calculator
+- `/tools/unit-converter` → Unit Converter (length/weight/temperature)
+- `/tools/qrcode-generator` → QR Code Generator
+- `/tools/json-formatter` → JSON Formatter
+- `/tools/password-generator` → Password Generator
+- `/tools/color-picker` → Color Picker (HEX/RGB/HSL)
+- `/tools/base64-codec` → Base64 Encode/Decode
+- `/tools/url-codec` → URL Encode/Decode
+- `/tools/timestamp-converter` → Unix Timestamp Converter
 
-### 项目结构
-```
-src/
-├── main.ts           # 应用入口，集成 Ionic 插件和主题
-├── App.vue           # 根组件，包含 IonRouterOutlet
-├── router/
-│   └── index.ts      # 路由配置，使用 tabs 布局
-├── views/            # 页面组件
-│   ├── TabsPage.vue  # 标签页容器
-│   └── Tab[1-3]Page.vue  # 各个标签页内容
-├── components/       # 可复用组件
-└── theme/            # Ionic 主题变量
+### Business Logic Separation
 
-tests/
-├── unit/             # Vitest 单元测试
-└── e2e/              # Cypress E2E 测试
-    ├── specs/        # 测试规范文件
-    └── support/      # Cypress 配置和辅助文件
-```
+All computation logic is extracted into pure functions in `src/utils/`, separate from Vue components:
 
-### 路由结构
-应用使用基于 Tabs 的导航模式：
-- `/` → 重定向到 `/tabs/tab1`
-- `/tabs/` → TabsPage 容器
-  - `/tabs/tab1` → Tab1Page
-  - `/tabs/tab2` → Tab2Page
-  - `/tabs/tab3` → Tab3Page
+- `utils/calculator.ts` — Calculator state machine (`calculate()` is a pure function taking state + operation, returning new state)
+- `utils/converters.ts` — Unit conversion (length/weight/temperature) using base-unit normalization
+- `utils/json-formatter.ts` — JSON formatting
+- `utils/clipboard.ts` — Clipboard write with fallback
+- `utils/base64-codec.ts` — Base64 encode/decode with Unicode support
+- `utils/url-codec.ts` — URL encode/decode (component and full URI)
+- `utils/timestamp-converter.ts` — Unix timestamp / date conversion
+- `utils/password-generator.ts` — Cryptographically random password generation + strength evaluation
+- `utils/color-converter.ts` — HEX/RGB/HSL color conversion
 
-### Ionic 集成要点
-- 使用 `IonicVue` 插件集成 Ionic 组件
-- 导入 Ionic 核心 CSS 和主题样式
-- 暗色模式配置为跟随系统 (`@ionic/vue/css/palettes/dark.system.css`)
-- 使用 `@/` 别名指向 `src` 目录
+Types for all tools are centralized in `src/types/index.ts` (enums for operations/units, interfaces for state).
 
-### 开发注意事项
-- 路径别名 `@/*` 已在 `tsconfig.json` 和 `vite.config.ts` 中配置
-- 构建前会自动运行 `vue-tsc` 进行类型检查
-- 使用 `@vue/test-utils` 进行单元测试
-- Cypress E2E 测试运行在 `http://localhost:5173`
+### Component Pattern
+
+Components use `<script setup lang="ts">` with Composition API. Ionic components are imported individually per file (not globally registered). The calculator demonstrates the component extraction pattern:
+- `components/calculator/CalculatorDisplay.vue` — Display + history rendering
+- `components/calculator/CalculatorButton.vue` — Button with type-based styling (number/operator/function/equals/zero)
+
+### Styling
+
+- Dark mode follows system preference via `@ionic/vue/css/palettes/dark.system.css`
+- Components use scoped styles with `@media (prefers-color-scheme: light)` overrides
+- Theme variables in `src/theme/variables.css` (currently minimal)
+- Path alias `@/` → `src/` configured in both `vite.config.ts` and `tsconfig.json`
+
+### Key Dependencies
+
+- `qrcode.vue` (v3) — QR code rendering as SVG/canvas
+- `@vitejs/plugin-legacy` — Browser compatibility via legacy builds
+- `@capacitor/android` — Native Android shell

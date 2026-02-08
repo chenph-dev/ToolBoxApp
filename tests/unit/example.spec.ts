@@ -1,10 +1,26 @@
-import { mount } from '@vue/test-utils'
-import Tab1Page from '@/views/Tab1Page.vue'
 import { describe, expect, test } from 'vitest'
+import { calculate, createInitialCalculatorState } from '@/utils/calculator'
+import { Operation } from '@/types'
 
-describe('Tab1Page.vue', () => {
-  test('renders tab 1 Tab1Page', () => {
-    const wrapper = mount(Tab1Page)
-    expect(wrapper.text()).toMatch('Tab 1 page')
+describe('calculator', () => {
+  test('initial state has display 0', () => {
+    const state = createInitialCalculatorState()
+    expect(state.display).toBe('0')
+  })
+
+  test('addition works', () => {
+    let state = createInitialCalculatorState()
+    state = calculate(state, '2')
+    state = calculate(state, Operation.Add)
+    state = calculate(state, '3')
+    state = calculate(state, Operation.Equals)
+    expect(state.display).toBe('5')
+  })
+
+  test('clear resets display', () => {
+    let state = createInitialCalculatorState()
+    state = calculate(state, '5')
+    state = calculate(state, Operation.Clear)
+    expect(state.display).toBe('0')
   })
 })

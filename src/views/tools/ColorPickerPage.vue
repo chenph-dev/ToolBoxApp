@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>颜色选择器</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="shareColor">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -67,10 +72,12 @@
 import { ref, reactive, computed } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
-  IonLabel, IonItem, IonInput, IonRange, IonButton, toastController
+  IonLabel, IonItem, IonInput, IonRange, IonButton, IonIcon, toastController
 } from '@ionic/vue';
+import { shareOutline } from 'ionicons/icons';
 import { hexToRgb, rgbToHex, rgbToHsl } from '@/utils/color-converter';
 import { copyToClipboard } from '@/utils/clipboard';
+import { shareContent } from '@/utils/share';
 
 const rgb = reactive({ r: 66, g: 133, b: 244 });
 const hexValue = ref('#4285f4');
@@ -96,6 +103,12 @@ async function copyValue(text: string) {
     const toast = await toastController.create({ message: '已复制！', duration: 1500, position: 'bottom' });
     await toast.present();
   } catch { /* ignore */ }
+}
+
+async function shareColor() {
+  const h = hsl.value;
+  const text = `HEX: ${hexValue.value}\nRGB: rgb(${rgb.r}, ${rgb.g}, ${rgb.b})\nHSL: hsl(${h.h}, ${h.s}%, ${h.l}%)`;
+  await shareContent({ title: '颜色值', text });
 }
 </script>
 

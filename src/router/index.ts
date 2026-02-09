@@ -42,6 +42,34 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tools/color-picker',
     component: () => import('@/views/tools/ColorPickerPage.vue'),
   },
+  {
+    path: '/tools/qr-scanner',
+    component: () => import('@/views/tools/QRScannerPage.vue'),
+  },
+  {
+    path: '/tools/flashlight',
+    component: () => import('@/views/tools/FlashlightPage.vue'),
+  },
+  {
+    path: '/tools/compass',
+    component: () => import('@/views/tools/CompassPage.vue'),
+  },
+  {
+    path: '/tools/level',
+    component: () => import('@/views/tools/LevelPage.vue'),
+  },
+  {
+    path: '/tools/noise-meter',
+    component: () => import('@/views/tools/NoiseMeterPage.vue'),
+  },
+  {
+    path: '/tools/screen-ruler',
+    component: () => import('@/views/tools/ScreenRulerPage.vue'),
+  },
+  {
+    path: '/tools/device-info',
+    component: () => import('@/views/tools/DeviceInfoPage.vue'),
+  },
 ];
 
 const router = createRouter({

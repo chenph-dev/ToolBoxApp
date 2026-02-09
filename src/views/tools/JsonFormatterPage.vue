@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>JSON 格式化</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="shareOutput" :disabled="!jsonOutput">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -118,10 +123,12 @@ import {
   checkmarkCircleOutline,
   codeSlashOutline,
   contractOutline,
-  copyOutline
+  copyOutline,
+  shareOutline
 } from 'ionicons/icons';
 import { formatJson as formatJsonUtil } from '@/utils/json-formatter';
 import { copyToClipboard } from '@/utils/clipboard';
+import { shareContent } from '@/utils/share';
 
 const jsonInput = ref('');
 const jsonOutput = ref('');
@@ -184,6 +191,11 @@ async function showToast(message: string) {
     position: 'bottom'
   });
   await toast.present();
+}
+
+async function shareOutput() {
+  if (!jsonOutput.value) return;
+  await shareContent({ title: 'JSON', text: jsonOutput.value });
 }
 </script>
 

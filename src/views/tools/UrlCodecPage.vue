@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>URL 编解码</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="shareOutput" :disabled="!output">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -67,9 +72,10 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
   IonLabel, IonTextarea, IonButton, IonIcon, IonSegment, IonSegmentButton, toastController
 } from '@ionic/vue';
-import { copyOutline } from 'ionicons/icons';
+import { copyOutline, shareOutline } from 'ionicons/icons';
 import { encodeURIComponentSafe, decodeURIComponentSafe, encodeURISafe, decodeURISafe } from '@/utils/url-codec';
 import { copyToClipboard } from '@/utils/clipboard';
+import { shareContent } from '@/utils/share';
 
 const input = ref('');
 const output = ref('');
@@ -106,6 +112,11 @@ async function copyOutput() {
     const toast = await toastController.create({ message: '已复制！', duration: 1500, position: 'bottom' });
     await toast.present();
   } catch { /* ignore */ }
+}
+
+async function shareOutput() {
+  if (!output.value) return;
+  await shareContent({ title: 'URL 编解码', text: output.value });
 }
 </script>
 

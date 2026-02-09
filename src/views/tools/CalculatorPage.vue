@@ -50,20 +50,36 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, onMounted, watch } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton } from '@ionic/vue';
 import CalculatorDisplay from '@/components/calculator/CalculatorDisplay.vue';
 import CalculatorButton from '@/components/calculator/CalculatorButton.vue';
-import { Operation } from '@/types';
+import { Operation, HistoryEntry } from '@/types';
 import { calculate, createInitialCalculatorState } from '@/utils/calculator';
+import { hapticsImpactLight } from '@/utils/haptics';
+import { getItem, setItem } from '@/utils/storage';
 
+const HISTORY_KEY = 'calculator_history';
 const state = reactive(createInitialCalculatorState());
 
 function handleButtonClick(value: string | Operation) {
+  hapticsImpactLight();
   const operation = value as Operation;
   const newState = calculate(state, operation);
   Object.assign(state, newState);
 }
+
+// Persist history
+watch(() => state.history, (history) => {
+  setItem(HISTORY_KEY, history);
+}, { deep: true });
+
+onMounted(async () => {
+  const saved = await getItem<HistoryEntry[]>(HISTORY_KEY);
+  if (saved && saved.length) {
+    state.history = saved;
+  }
+});
 </script>
 
 <style scoped>

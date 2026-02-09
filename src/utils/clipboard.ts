@@ -1,4 +1,12 @@
-export function copyToClipboard(text: string): Promise<void> {
+import { Capacitor } from '@capacitor/core';
+import { Clipboard } from '@capacitor/clipboard';
+
+export async function copyToClipboard(text: string): Promise<void> {
+  if (Capacitor.isNativePlatform()) {
+    await Clipboard.write({ string: text });
+    return;
+  }
+
   if (navigator.clipboard && navigator.clipboard.writeText) {
     return navigator.clipboard.writeText(text);
   }
@@ -19,4 +27,17 @@ export function copyToClipboard(text: string): Promise<void> {
       reject(e);
     }
   });
+}
+
+export async function readFromClipboard(): Promise<string> {
+  if (Capacitor.isNativePlatform()) {
+    const result = await Clipboard.read();
+    return result.value;
+  }
+
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    return navigator.clipboard.readText();
+  }
+
+  return '';
 }

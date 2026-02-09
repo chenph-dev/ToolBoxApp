@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router';
 
 import { IonicVue } from '@ionic/vue';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { App as CapApp } from '@capacitor/app';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -40,4 +43,24 @@ const app = createApp(App)
 
 router.isReady().then(() => {
   app.mount('#app');
+
+  if (Capacitor.isNativePlatform()) {
+    // Match status bar to system theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const updateStatusBar = (dark: boolean) => {
+      StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: dark ? '#1c1c1d' : '#ffffff' }).catch(() => {});
+    };
+    updateStatusBar(prefersDark.matches);
+    prefersDark.addEventListener('change', (e) => updateStatusBar(e.matches));
+
+    // Handle hardware back button
+    CapApp.addListener('backButton', ({ canGoBack }) => {
+      if (canGoBack) {
+        router.back();
+      } else {
+        CapApp.exitApp();
+      }
+    });
+  }
 });

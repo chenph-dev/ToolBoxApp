@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>时间戳转换</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="shareResult">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -74,9 +79,10 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
   IonLabel, IonItem, IonInput, IonButton, IonIcon, toastController
 } from '@ionic/vue';
-import { copyOutline } from 'ionicons/icons';
+import { copyOutline, shareOutline } from 'ionicons/icons';
 import { timestampToDate, dateToTimestamp, formatDate, formatUTC, nowTimestamp } from '@/utils/timestamp-converter';
 import { copyToClipboard } from '@/utils/clipboard';
+import { shareContent } from '@/utils/share';
 
 const currentTimestamp = ref(nowTimestamp());
 const tsInput = ref('');
@@ -115,6 +121,13 @@ async function copyValue(text: string) {
     const toast = await toastController.create({ message: '已复制！', duration: 1500, position: 'bottom' });
     await toast.present();
   } catch { /* ignore */ }
+}
+
+async function shareResult() {
+  let text = `当前时间戳: ${currentTimestamp.value}`;
+  if (dateResult.value) text += `\n本地: ${dateResult.value.local}\nUTC: ${dateResult.value.utc}`;
+  if (timestampResult.value !== null) text += `\nUnix 时间戳: ${timestampResult.value}`;
+  await shareContent({ title: '时间戳转换', text });
 }
 </script>
 

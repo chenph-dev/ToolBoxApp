@@ -8,6 +8,13 @@ import {
   documentTextOutline,
   linkOutline,
   timeOutline,
+  scanOutline,
+  flashlightOutline,
+  compassOutline,
+  speedometerOutline,
+  micOutline,
+  phonePortraitOutline,
+  resizeOutline,
 } from 'ionicons/icons';
 
 export interface ToolItem {
@@ -61,6 +68,54 @@ export const tools: ToolItem[] = [
     route: '/tools/color-picker',
     category: 'daily',
   },
+  {
+    id: 'qr-scanner',
+    name: '扫码识别',
+    description: '扫描二维码 / 条形码',
+    icon: scanOutline,
+    route: '/tools/qr-scanner',
+    category: 'daily',
+  },
+  {
+    id: 'flashlight',
+    name: '手电筒',
+    description: '手电筒 / SOS 模式',
+    icon: flashlightOutline,
+    route: '/tools/flashlight',
+    category: 'daily',
+  },
+  {
+    id: 'compass',
+    name: '指南针',
+    description: '数字罗盘方向指示',
+    icon: compassOutline,
+    route: '/tools/compass',
+    category: 'daily',
+  },
+  {
+    id: 'level',
+    name: '水平仪',
+    description: '气泡水平仪检测倾斜',
+    icon: speedometerOutline,
+    route: '/tools/level',
+    category: 'daily',
+  },
+  {
+    id: 'noise-meter',
+    name: '噪音计',
+    description: '测量环境噪音分贝',
+    icon: micOutline,
+    route: '/tools/noise-meter',
+    category: 'daily',
+  },
+  {
+    id: 'screen-ruler',
+    name: '屏幕尺子',
+    description: '屏幕上测量实际长度',
+    icon: resizeOutline,
+    route: '/tools/screen-ruler',
+    category: 'daily',
+  },
   // Dev Tools
   {
     id: 'json-formatter',
@@ -92,6 +147,14 @@ export const tools: ToolItem[] = [
     description: 'Unix 时间戳与日期互转',
     icon: timeOutline,
     route: '/tools/timestamp-converter',
+    category: 'dev',
+  },
+  {
+    id: 'device-info',
+    name: '设备信息',
+    description: '查看设备与网络详情',
+    icon: phonePortraitOutline,
+    route: '/tools/device-info',
     category: 'dev',
   },
 ];

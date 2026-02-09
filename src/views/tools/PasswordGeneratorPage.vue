@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>密码生成器</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="sharePw" :disabled="!password">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -68,10 +73,11 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
   IonLabel, IonItem, IonList, IonRange, IonToggle, IonButton, IonIcon, toastController
 } from '@ionic/vue';
-import { copyOutline } from 'ionicons/icons';
+import { copyOutline, shareOutline } from 'ionicons/icons';
 import { PasswordOptions } from '@/types';
 import { generatePassword, evaluateStrength, strengthColor } from '@/utils/password-generator';
 import { copyToClipboard } from '@/utils/clipboard';
+import { shareContent } from '@/utils/share';
 
 const password = ref('');
 const options = reactive<PasswordOptions>({
@@ -103,6 +109,11 @@ async function copyPw() {
     const toast = await toastController.create({ message: '已复制！', duration: 1500, position: 'bottom' });
     await toast.present();
   } catch { /* ignore */ }
+}
+
+async function sharePw() {
+  if (!password.value) return;
+  await shareContent({ title: '生成的密码', text: password.value });
 }
 </script>
 

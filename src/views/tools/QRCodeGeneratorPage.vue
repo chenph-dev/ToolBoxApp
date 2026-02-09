@@ -6,6 +6,11 @@
           <ion-back-button default-href="/" />
         </ion-buttons>
         <ion-title>二维码生成</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="shareQR" :disabled="!qrText">
+            <ion-icon slot="icon-only" :icon="shareOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -59,8 +64,9 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton,
   IonItem, IonLabel, IonTextarea, IonRange, IonButton, IonIcon, toastController
 } from '@ionic/vue';
-import { qrCodeOutline, downloadOutline } from 'ionicons/icons';
+import { qrCodeOutline, downloadOutline, shareOutline } from 'ionicons/icons';
 import QRCodeVue from 'qrcode.vue';
+import { shareContent } from '@/utils/share';
 
 const qrText = ref('');
 const size = ref(250);
@@ -111,6 +117,10 @@ function downloadCanvas(canvas: HTMLCanvasElement) {
 async function showToast(message: string) {
   const toast = await toastController.create({ message, duration: 2000, position: 'bottom' });
   await toast.present();
+}
+
+async function shareQR() {
+  await shareContent({ title: '二维码内容', text: qrText.value });
 }
 </script>
 

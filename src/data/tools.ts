@@ -15,6 +15,7 @@ import {
   micOutline,
   phonePortraitOutline,
   resizeOutline,
+  fitnessOutline,
 } from 'ionicons/icons';
 
 export interface ToolItem {
@@ -114,6 +115,14 @@ export const tools: ToolItem[] = [
     description: '屏幕上测量实际长度',
     icon: resizeOutline,
     route: '/tools/screen-ruler',
+    category: 'daily',
+  },
+  {
+    id: 'screen-brightness',
+    name: '屏幕亮度',
+    description: '调节屏幕亮度和自动亮度',
+    icon: fitnessOutline,
+    route: '/tools/screen-brightness',
     category: 'daily',
   },
   // Dev Tools

@@ -70,6 +70,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tools/device-info',
     component: () => import('@/views/tools/DeviceInfoPage.vue'),
   },
+  {
+    path: '/tools/screen-brightness',
+    component: () => import('@/views/tools/ScreenBrightnessPage.vue'),
+  },
 ];
 
 const router = createRouter({
